@@ -1,0 +1,39 @@
+buildscript {
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.5.20"
+    }
+
+    repositories {
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
+
+subprojects {
+    group = GROUP
+    version = VERSION_NAME
+
+    repositories {
+        mavenCentral()
+        google()
+    }
+
+    plugins.withId('org.jetbrains.kotlin.jvm') {
+        java {
+            sourceCompatibility = JavaVersion.VERSION_1_8
+            targetCompatibility = JavaVersion.VERSION_1_8
+        }
+        compileKotlin {
+            kotlinOptions {
+                jvmTarget = "1.8"
+                freeCompilerArgs = [
+                        "-XXLanguage:+InlineClasses",
+                        "-Xjvm-default=enable",
+                        "-progressive",
+                        '-Xopt-in=kotlin.contracts.ExperimentalContracts'
+                ]
+            }
+        }
+    }
+}

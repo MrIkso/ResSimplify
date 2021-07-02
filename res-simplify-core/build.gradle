@@ -1,0 +1,19 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm'
+}
+
+
+dependencies {
+    // zip operations
+    implementation 'net.lingala.zip4j:zip4j:2.8.0'
+
+    implementation 'com.google.guava:guava:30.1.1-jre'
+    implementation 'com.android.tools.build:apksig:4.2.0-alpha08'
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}

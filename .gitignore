@@ -1,0 +1,5 @@
+# Project exclude paths
+/.gradle/
+/res-simplify/build/
+/res-simplify-core/build/
+/res-simplify-core/build/classes/java/main/

@@ -1,0 +1,5 @@
+rootProject.name = 'ResSimplify'
+
+include ':res-simplify'
+include ':res-simplify-core'
+
