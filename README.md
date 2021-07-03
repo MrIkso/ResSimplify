@@ -8,6 +8,21 @@ An open source deobfuscator resources in apk file.
 This tool used this open source project
 - [ArscBlamer](https://github.com/google/android-arscblamer) for parsing and editing resources.arsc files
 
+## Usage
+
+`java -jar res-simplify-[version]-all.jar --in [input apk] --out [output apk]`
+
+Using a whitelist from a file to ignore resource names
+1. Create file by name `whitelist.txt`
+2. Place file in directory with the res-simplify-[version]-all.jar
+3. Enter resource names to ignore
+
+Example of content in `whitelist.txt`
+```
+app_name
+project_id
+```
+
 ## License
 
     Copyright (C) 2021 Mr Isko
