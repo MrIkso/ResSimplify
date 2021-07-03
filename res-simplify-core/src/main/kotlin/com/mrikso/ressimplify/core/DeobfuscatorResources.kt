@@ -1,5 +1,6 @@
 package com.mrikso.ressimplify.core
 
+import net.lingala.zip4j.ZipFile
 import java.io.File
 import java.io.FileInputStream
 
@@ -14,36 +15,52 @@ class DeobfuscatorResources {
     ) {
         println("Renaming resources...")
         var renamedCount = 0;
-        val zipFile = net.lingala.zip4j.ZipFile(apkPath)
+        var count = 0;
+        val zipFile = ZipFile(apkPath)
         resourcePaths.forEach { file ->
             if (zipFile.getFileHeader(file.key) != null) {
                 //  println("${file.key} -> ${file.value}")
                 // zipFile.renameFile(zipFile.getFileHeader(file.key), file.value)
                 val outFilePath = File("${tempDir}/${file.value}")
-                zipFile.extractFile(file.key, outFilePath.parent, outFilePath.name)
-                zipFile.removeFile(file.key)
+                if (file.value.endsWith(".xml")) {
+                    zipFile.extractFile(file.key, outFilePath.parent, outFilePath.name)
+                    zipFile.removeFile(file.key)
+                    if (ParseAxml(normalAttributeNames).parseAxml(
+                            FileInputStream(outFilePath.absolutePath),
+                            outFilePath.absolutePath
+                        )
+                    ) {
+                        count++
+                    }
+
+                } else {
+                    zipFile.renameFile(file.key, file.value)
+                }
+                /* val outFilePath = File("${tempDir}/${file.value}")
+
+                 zipFile.removeFile(file.key)*/
                 renamedCount++
             }
         }
 
         println("Renamed resources: $renamedCount")
-        println("Renaming attributes in xml files...")
-        var count = 0;
+        //    println("Renaming attributes in xml files...")
+        //  var count = 0;
 
-        resourcePaths.forEach { file ->
+        /*  resourcePaths.forEach { file ->
 
-            val outFilePath = File("${tempDir}/${file.value}")
+              val outFilePath = File("${tempDir}/${file.value}")
 
-            if (file.value.endsWith(".xml")) {
-                if (ParseAxml(normalAttributeNames).parseAxml(
-                        FileInputStream(outFilePath.absolutePath),
-                        outFilePath.absolutePath
-                    )
-                )
-                    count++
+              if (file.value.endsWith(".xml")) {
+                  if (ParseAxml(normalAttributeNames).parseAxml(
+                          FileInputStream(outFilePath.absolutePath),
+                          outFilePath.absolutePath
+                      )
+                  )
+                      count++
 
-            }
-        }
+              }
+          }*/
 
         println("Renamed xml attributes: $count")
 

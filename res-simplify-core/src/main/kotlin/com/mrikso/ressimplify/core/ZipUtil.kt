@@ -23,8 +23,21 @@ object ZipUtil {
             zipParameters.compressionLevel = CompressionLevel.FASTEST
 
             if (oriFile.isDirectory) {
-                zipFile.addFolder(oriFile, zipParameters)
+               /* oriFile.walk().forEach { file ->
+                    if(file.isFile) {
+                        zipParameters.rootFolderNameInZip = file.parent
+                        if (file.extension == "png") {
+                            zipParameters.compressionMethod = CompressionMethod.STORE
+                        }
+                        zipFile.addFile(file, zipParameters)
+                    }
+                }
+*/
+               zipFile.addFolder(oriFile, zipParameters)
             } else {
+                if(oriFile.extension == "arsc"){
+                    zipParameters.compressionMethod = CompressionMethod.STORE
+                }
                 zipFile.addFile(oriFile, zipParameters)
             }
         } catch (e: Exception) {
