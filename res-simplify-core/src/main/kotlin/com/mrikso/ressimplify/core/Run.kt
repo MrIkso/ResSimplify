@@ -4,11 +4,11 @@ import com.android.apksig.ApkSigner
 import com.google.devrel.gmscore.tools.apk.arsc.BinaryResourceFile
 import com.mrikso.utils.SignatureResources
 import java.io.File
-import java.nio.file.Files
+import java.io.InputStream
 import java.security.PrivateKey
 import java.security.cert.X509Certificate
 import java.util.zip.ZipFile
-import kotlin.concurrent.thread
+import kotlin.io.path.createTempDirectory
 
 
 class Run {
@@ -81,12 +81,12 @@ class Run {
         ParseArsc().parse(tempApk.absolutePath, tempDir, resources, whiteListMap)
         signApk(tempApk, File(outApk!!))
         println("Done!")
-        thread(start = true) {
-            File(tempDir).deleteRecursively()
-        }
+        if (File(tempDir).deleteRecursively())
+            println("Temporary files deleted")
+
     }
 
-    @Throws(java.lang.Exception::class)
+
     private fun signApk(inputApk: File, outFile: File) {
         println("Signing APK: ${inputApk.path}")
 
@@ -104,15 +104,14 @@ class Run {
         println("Signed! $outFile")
     }
 
-    @Throws(Exception::class)
-    fun getDefaultSignerConfigFromResources(keyNameInResources: String): ApkSigner.SignerConfig {
+    private fun getDefaultSignerConfigFromResources(keyNameInResources: String): ApkSigner.SignerConfig {
         val privateKey: PrivateKey = SignatureResources.toPrivateKey("$keyNameInResources.pk8", "RSA")
         val certs: List<X509Certificate> = SignatureResources.toCertificateChain("$keyNameInResources.x509.pem")
         return ApkSigner.SignerConfig.Builder("CERT", privateKey, certs).build()
     }
 
     private fun getTempDir(): String {
-        return Files.createTempDirectory("ResSimplify").toString()
+        return createTempDirectory("ResSimplify").toAbsolutePath().toString()
     }
 
 }
