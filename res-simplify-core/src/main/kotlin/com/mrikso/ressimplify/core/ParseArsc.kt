@@ -161,27 +161,27 @@ class ParseArsc {
 
     private fun getNormalNameOnFile(oldFilePath: String, resType: String, resTypeId: Int): String {
         val normalName = getNormalName(resType, resTypeId)
+        val zip = ZipFile(_apkFile!!)
+        val ext: String = when (resType) {
+            "color",
+            "navigation",
+            "layout",
+            "anim",
+            "animator",
+            "menu",
+            "interpolator",
+            "transition",
+            "xml" -> "xml"
+            else -> DetectExt().getExtension(zip.getInputStream(zip.getEntry(oldFilePath)), oldFilePath)
 
-        ZipFile(_apkFile!!).use { zip ->
-            zip.getInputStream(zip.getEntry(oldFilePath)).use {
-                var ext: String = DetectExt().getExtension(it, oldFilePath)
-                when (resType) {
-                    "navigation",
-                    "layout",
-                    "anim",
-                    "animator",
-                    "menu",
-                    "xml" -> ext = "xml"
-                }
-
-                if (ext.isEmpty()) {
-                    return normalName
-                }
-                return "$normalName.$ext"
-            }
         }
-
+        zip.close()
+        if (ext.isEmpty()) {
+            return normalName
+        }
+        return "$normalName.$ext"
     }
+
 
     private fun getNormalPath(oldFilePath: String, resType: String, resConfigType: String, resTypeId: Int): String {
         return when (resConfigType) {
@@ -210,6 +210,8 @@ class ParseArsc {
             "raw",
             "xml",
             "navigation",
+            "interpolator",
+            "transition",
             "font" -> {
                 val value: BinaryResourceValue? = typeChunk.value()
                 return formatValue(value!!, stringPool!!)
