@@ -27,7 +27,7 @@ class DeobfuscatorResources {
         while (entryEnumeration.hasMoreElements()) {
             val zipEntry: ZipEntry = entryEnumeration.nextElement()
 
-            if (zipEntry.isDirectory || zipEntry.name == "resources.arsc" || zipEntry.name.startsWith("META-INF/")) continue
+            if (zipEntry.isDirectory || zipEntry.name == Run.ARSC_FILE_NAME || zipEntry.name.startsWith("META-INF/")) continue
             val oldResName = zipEntry.name
             if (resourcePaths.containsKey(oldResName)) {
 
@@ -41,7 +41,7 @@ class DeobfuscatorResources {
                         zipFile.getInputStream(zipEntry)
                     )
                     if (byteArray != null) {
-                        println("$oldResName -> $newResName")
+                        // println("$oldResName -> $newResName")
                         writeZipEntry(zos, zipEntry, byteArray)
                         changedXmlList.add(newResName)
                         count++
