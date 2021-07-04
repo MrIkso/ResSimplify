@@ -73,12 +73,12 @@ class Run {
         val tempDir = getTempDir()
         //  println(tempDir)
         val tempApk = File("${tempDir}/$apkName")
-        File(inputApk).copyTo(tempApk, true)
-        val resources: BinaryResourceFile = ZipFile(tempApk).use { zip ->
+       // File(inputApk).copyTo(tempApk, true)
+        val resources: BinaryResourceFile = ZipFile(inputApk).use { zip ->
             zip.getInputStream(zip.getEntry(ARSC_FILE_NAME)).use { BinaryResourceFile.fromInputStream(it) }
         }
 
-        ParseArsc().parse(tempApk.absolutePath, tempDir, resources, whiteListMap)
+        ParseArsc().parse(inputApk, tempDir, resources, whiteListMap)
         signApk(tempApk, File(outApk!!))
         println("Done!")
         if (File(tempDir).deleteRecursively())

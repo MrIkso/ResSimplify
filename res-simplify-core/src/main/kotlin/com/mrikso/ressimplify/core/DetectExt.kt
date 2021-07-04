@@ -10,6 +10,9 @@ class DetectExt {
     }
 
     public fun getExtension(inputStream: InputStream, resPath: String): String {
+        if(resPath.endsWith(".9.png")){
+            return "9.png"
+        }
         val extStream = detectExtension(inputStream)
         if (extStream.isNullOrEmpty())
             return getExtension(resPath)
@@ -31,12 +34,6 @@ class DetectExt {
                 else -> null
             }
         }
-
-        /* val read1: Int = inputStream.read(headers, 8, 4)
-         if (read1 == headers.size) {
-             if (bytesToHex(headers) == "57454250")
-                 return "webp"
-         }*/
         return null
     }
 

@@ -1,6 +1,6 @@
 package com.mrikso.ressimplify.core
 
-import com.google.common.io.Files
+
 import com.google.devrel.gmscore.tools.apk.arsc.*
 import com.mrikso.ressimplify.core.Run.Companion.ARSC_FILE_NAME
 import java.io.File
@@ -45,7 +45,7 @@ class ParseArsc {
         }
 
         // write deobfuscated arsc file
-        Files.write(resources.toByteArray(), File("${_tempDir!!}/${ARSC_FILE_NAME}"))
+        File("${_tempDir!!}/${ARSC_FILE_NAME}").writeBytes(resources.toByteArray())
         // run deobfuscator res path and axml files
         DeobfuscatorResources().runDeobfuscator(_apkFile!!, _tempDir!!, resourceFileNames, normalAttributeNames)
     }
@@ -147,8 +147,11 @@ class ParseArsc {
     private fun getNormalPath(oldFilePath: String, resType: String, resConfigType: String, resTypeId: Int): String {
         return when (resConfigType) {
             "default",
-            "navigation" ->
-                String.format("res/%s/%s", resType, getNormalNameOnFile(oldFilePath, resType, resTypeId))
+            "navigation",
+            "raw" -> String.format(
+                "res/%s/%s",
+                resType,
+                getNormalNameOnFile(oldFilePath, resType, resTypeId))
             else -> String.format(
                 "res/%s-%s/%s",
                 resType,

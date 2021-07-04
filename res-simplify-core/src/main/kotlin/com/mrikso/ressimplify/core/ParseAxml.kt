@@ -1,41 +1,30 @@
 package com.mrikso.ressimplify.core
 
 import com.google.common.collect.Lists
-import com.google.common.io.Files
 import com.google.devrel.gmscore.tools.apk.arsc.*
-import java.io.File
 import java.io.FileInputStream
 import java.io.InputStream
 
 class ParseAxml(normalAttributeNames: MutableMap<String, String>) {
 
-    private var xmlFilePath: String? = null
     private var fileChanged = false
     private var _normalAttributeNames: MutableMap<String, String> = normalAttributeNames
 
-
-    fun parseAxml(inputStream: InputStream, outXmlFilePath: String): Boolean {
-        xmlFilePath = outXmlFilePath
-        return parseAxml(inputStream)
+    fun parseAxml(filePath: String):ByteArray? {
+        return parseAxml(FileInputStream(filePath))
     }
 
-    fun parseAxml(filePath: String, outXmlFilePath: String) {
-        xmlFilePath = outXmlFilePath
-        parseAxml(FileInputStream(filePath))
-    }
-
-    private fun parseAxml(filePath: InputStream): Boolean {
+    fun parseAxml(filePath: InputStream): ByteArray? {
         val binaryResourceFile = BinaryResourceFile.fromInputStream(filePath)
         for (chunk in binaryResourceFile.chunks) {
             val xmlChunk = chunk as (XmlChunk)
             deobfuscateAttributes(xmlChunk.chunks)
         }
         if (fileChanged) {
-            Files.write(binaryResourceFile.toByteArray(), File(xmlFilePath!!))
             fileChanged = false
-            return true
+            return binaryResourceFile.toByteArray()
         }
-        return false
+        return null
     }
 
     private fun deobfuscateAttributes(chunks: Map<Int, Chunk>) {
