@@ -30,10 +30,24 @@ class DeobfuscatorResources {
             if (zipEntry.isDirectory || zipEntry.name == Run.ARSC_FILE_NAME || zipEntry.name.startsWith("META-INF/")) continue
             val oldResName = zipEntry.name
             if (resourcePaths.containsKey(oldResName)) {
-
+                val origCompress = zipEntry.method
                 val newResName: String? = resourcePaths[oldResName]
                 // set new name on file
                 zipEntry.name = newResName!!
+                if (newResName.endsWithMulti(
+                        ".9.png",
+                        ".png",
+                        ".jpg",
+                        ".webp",
+                        ".mp3",
+                        ".wav"
+                    )
+                ) {
+                    zos.setMethod(ZipOutputStream.STORED)
+                }
+                 else {
+                    zos.setMethod(origCompress)
+                }
 
                 // println("${zipEntry.name} -> $newResName")
                 if (newResName.endsWith(".xml")) {
@@ -97,5 +111,11 @@ class DeobfuscatorResources {
         zipOutputStream.putNextEntry(entryName)
         zipOutputStream.write(entryData)
         zipOutputStream.closeEntry()
+    }
+
+    fun String.endsWithMulti(vararg string: String): Boolean {
+        return string.any {
+            endsWith(it)
+        }
     }
 }
